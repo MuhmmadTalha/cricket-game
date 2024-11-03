@@ -34,6 +34,8 @@ private:
     string firstmover;
     string secondmover;
     string onfield;
+    string offfield;
+    int bb;
 
 public:
     Choices(string n1, string n2, char c) : Player(n1, n2), choice(c) {}
@@ -86,20 +88,39 @@ public:
         }
     }
 
-    void assignRoles()
+    void tossResult()
     {
         if ((choice == 'H' || choice == 'h') && outcome == 1 || (choice == 'T' || choice == 't') && outcome == 0)
         {
-            firstmover = onfield;
-            cout << "Congratulations! " << firstmover << " you have won the toss. " << endl;
-            cout << "What would you choose batting or balling?";
+            onfield = firstmover;
+            offfield = secondmover;
+            cout << "Congratulations! " << firstmover << ", you have won the toss." << endl;
+            cout << "What would you choose, batting(1) or bowling(2)? : ";
+            cin >> bb;
         }
-
         else
         {
-            secondmover = onfield;
-            cout << "Sorry, " << firstmover << " you have lost the toss." << endl;
-            cout << secondmover << " What would you choose batting or balling?";
+            onfield = secondmover;
+            offfield = firstmover;
+            cout << "Sorry, " << firstmover << ", you have lost the toss." << endl;
+            cout << secondmover << ", what would you choose, batting(1) or bowling(2)? : ";
+            cin >> bb;
+        }
+    }
+
+    void chooseRole()
+    {
+        if (bb == 1)
+        {
+            cout << onfield << " has decided to bat! " << offfield << " will now bowl." << endl;
+        }
+        else if (bb == 2)
+        {
+            cout << onfield << " has decided to bowl! " << offfield << " will now bat." << endl;
+        }
+        else
+        {
+            cout << "Invalid choice for batting or bowling." << endl;
         }
     }
 };
@@ -114,7 +135,8 @@ int main()
 
     Choices choice(player.getName1(), player.getName2(), ' ');
     choice.selectChoices();
-    choice.assignRoles();
+    choice.tossResult();
+    choice.chooseRole();
 
     return 0;
 }
