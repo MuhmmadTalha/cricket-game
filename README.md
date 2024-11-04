@@ -28,7 +28,7 @@ This is a console-based **Cricket Game Simulation** built in C++. In this intera
 
 1. **Clone the repository**:
     ```bash
-    git clone https://github.com/MuhammdTalha/cricket-game-simulation.git
+    git clone https://github.com/MuhmmadTalha/cricket-game-simulation.git
     cd cricket-game-simulation
     ```
 
