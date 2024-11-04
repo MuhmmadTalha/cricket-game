@@ -2,6 +2,8 @@
 #include <string>
 #include <cstdlib>
 #include <ctime>
+#include <unistd.h> // For usleep on Linux/macOS
+
 using namespace std;
 
 class Player
@@ -75,6 +77,7 @@ public:
         if (choice == 'H' || choice == 'h' || choice == 'T' || choice == 't')
         {
             cout << "Flipping coin... Chances are 50/50;" << endl;
+            usleep(500000);
 
             outcome = rand() % 2;
             if (outcome == 1)
@@ -133,6 +136,13 @@ public:
 
     string getBatter() const { return bater; }
     string getBowler() const { return baller; }
+
+    void switchRoles()
+    {
+        string temp = bater;
+        bater = baller;
+        baller = temp;
+    }
 };
 
 class Gameplay : public Choices
@@ -140,7 +150,9 @@ class Gameplay : public Choices
 private:
     int baterMove;
     int ballerMove;
-    int score = 0;
+    int score1 = 0;
+    int score2 = 0;
+    int currentScore = 0;
 
 public:
     Gameplay(string n1, string n2, char c) : Choices(n1, n2, c) {}
@@ -150,49 +162,87 @@ public:
         for (int i = 0; i < 7; i++)
         {
             cout << "." << endl;
+            usleep(200000);
         }
 
-        for (int i = 6; i >= 0; i--)
+        for (int innings = 0; innings < 2; innings++)
         {
-            cout << getBatter() << " choose your run(0-6)!: ";
-            cin >> baterMove;
+            currentScore = 0;
 
-            for (int j = 0; j < 3; j++)
+            for (int ball = 1; ball <= 12; ball++)
             {
-                cout << "." << endl;
+                system("clear"); // Clear screen
+                cout << "Ball #" << ball << endl;
+                cout << getBatter() << " choose your run (0-6)!: ";
+                cin >> baterMove;
+
+                for (int j = 0; j < 3; j++)
+                {
+                    cout << "." << endl;
+                    usleep(200000);
+                }
+
+                cout << getBowler() << " choose your move (0-6)!: ";
+                cin >> ballerMove;
+
+                cout << endl
+                     << "Matching Result!..";
+                for (int k = 0; k < 3; k++)
+                {
+                    cout << "." << endl;
+                    usleep(200000);
+                }
+
+                if (baterMove == ballerMove)
+                {
+                    cout << getBatter() << " is OUT with a score of " << currentScore << "!" << endl;
+                    usleep(500000);
+                    break;
+                }
+                else if (baterMove >= 0 && baterMove <= 6)
+                {
+                    currentScore += baterMove;
+                    cout << "Nice shot! " << getBatter() << " scored " << baterMove;
+                    if (baterMove == 4)
+                        cout << " - It's a FOUR!" << endl;
+                    else if (baterMove == 6)
+                        cout << " - It's a SIX!" << endl;
+                    else
+                        cout << " runs!" << endl;
+                    cout << "Total score: " << currentScore << endl;
+                    usleep(500000);
+                }
+                else
+                {
+                    cout << "Invalid move by " << getBatter() << ". Please choose a run between 0 and 6." << endl;
+                }
+
+                cout << "Remaining balls: " << (12 - ball) << endl
+                     << endl;
             }
-            cout << getBowler() << " choose your move(0-6)!: ";
-            cin >> ballerMove;
 
-            cout << endl
-                 << "Matching Result!..";
-            for (int k = 0; k < 3; k++)
-            {
-                cout << "." << endl;
-            }
-            moveChecker();
+            if (innings == 0)
+                score1 = currentScore;
+            else
+                score2 = currentScore;
 
-            cout << endl
-                 << "Remaining balls: " << i << endl;
-        }
-    }
+            cout << getBatter() << "'s innings ended with a score of: " << currentScore << endl
+                 << endl;
+            usleep(1000000);
 
-    void moveChecker()
-    {
-        if (baterMove == ballerMove)
-        {
-            cout << getBatter() << " is OUT! with a score of " << score << ". Now " << getBowler() << "'s turn to bat." << endl;
-            // Reset or swap roles for the next innings can be handled here
+            switchRoles();
         }
-        else if (baterMove >= 0 && baterMove <= 6)
-        {
-            score += baterMove;
-            cout << "Nice shot! " << getBatter() << " scored " << baterMove << " runs, total score: " << score << endl;
-        }
+
+        cout << "Game Over!" << endl;
+        cout << name1 << "'s Score: " << score1 << endl;
+        cout << name2 << "'s Score: " << score2 << endl;
+
+        if (score1 > score2)
+            cout << name1 << " wins!" << endl;
+        else if (score2 > score1)
+            cout << name2 << " wins!" << endl;
         else
-        {
-            cout << "Invalid move by " << getBatter() << ". Please choose a run between 0 and 6." << endl;
-        }
+            cout << "It's a tie!" << endl;
     }
 };
 
